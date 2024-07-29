@@ -88,8 +88,8 @@ const Register = () => {
           <Button type="submit" className="w-full">
             Create an account
           </Button>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
-          {success && <p className="text-green-500 mt-2">{success}</p>}
+          {error && <p className="text-red-500 mt-2 mx-auto">{error}</p>}
+          {success && <p className="text-green-500 mt-2 mx-auto">{success}</p>}
         </form>
         <div className="mt-4 text-center text-sm">
           Already have an account?{' '}
