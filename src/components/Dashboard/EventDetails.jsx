@@ -58,31 +58,26 @@ const EventDetails = () => {
     fetchData();
   }, []);
 
-  const handleDelete = React.useCallback(async (id) => {
+  const handleDeleteClick = React.useCallback(async (id) => {
+    console.log('deleting id:', id);
     try {
-      const response = await fetch('/api/eventDetails', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id }),
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+      const response = await fetch(`${baseUrl}/api/eventDetails/${id}`, {
+        method: 'DELETE',
       });
 
       if (response.ok) {
-        setData((prevData) => prevData.filter((item) => item._id !== id));
+        alert('Event deleted');
+        console.log(response);
       } else {
-        console.error('Failed to archive record');
+        console.log(response);
+        console.error('Failed to delete Event');
+        throw new Error('Deletion failed');
       }
     } catch (error) {
-      console.error('Error archiving record:', error);
+      console.error('Error deleting Event:', error);
+      alert(`Error deleting event: ${error}`);
     }
-  }, []);
-
-  const copyToClipboard = React.useCallback((text) => {
-    navigator.clipboard.writeText(text).then(
-      () => console.log('Copied to clipboard!'),
-      (err) => console.error('Failed to copy to clipboard', err)
-    );
   }, []);
 
   const columns = React.useMemo(
@@ -186,18 +181,14 @@ const EventDetails = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => copyToClipboard(request._id)}>
-                  Copy event ID
-                </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Link href={`/dashboard/event-details/${request._id}`}>
-                    View details
-                  </Link>
+                  <Link href={`/edit-event/${request._id}`}>Edit</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-[#ff0000] font-bold"
-                  onClick={() => handleDelete(request._id)}
+                  onClick={() => handleDeleteClick(request._id)}
                 >
                   Delete
                 </DropdownMenuItem>
@@ -207,7 +198,7 @@ const EventDetails = () => {
         },
       },
     ],
-    [copyToClipboard, handleDelete]
+    [handleDeleteClick]
   );
 
   const table = useReactTable({
